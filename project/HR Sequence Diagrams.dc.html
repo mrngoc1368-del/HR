@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-f498a39b-0fea-4e0e-8e8a-d05f8e2368be/styles.css">
+<script src="_ds/broadsheet-f498a39b-0fea-4e0e-8e8a-d05f8e2368be/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>body{margin:0;background:var(--color-bg);color:var(--color-text)} a{color:var(--color-accent)} a:hover{color:var(--color-accent-700)}</style>
+</helmet>
+<div style="max-width:1160px;padding:clamp(24px,5vw,64px);display:flex;flex-direction:column;gap:64px;font-family:var(--font-body)">
+  <div style="max-width:720px">
+    <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">Ngoclinhn Group · Cổng nhân sự · Tài liệu kỹ thuật</div>
+    <h1 style="font-size:clamp(34px,5vw,52px);line-height:1.05;margin:0 0 var(--space-3)">Tính năng và luồng xử lý qua ba tầng</h1>
+    <p style="font-size:17px;color:var(--color-neutral-700);text-wrap:pretty;margin:0">Frontend (ứng dụng web React, chạy trên desktop và mobile) gọi Backend (REST API, xác thực bằng JWT), Backend đọc/ghi Database (PostgreSQL). Duyệt đơn nghỉ đi qua 2 cấp: trưởng nhóm, rồi giám đốc.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+    <h2 style="margin:0">Danh sách tính năng</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:var(--space-6) var(--space-8)">
+      <sc-for list="{{ features }}" as="g" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="display:flex;align-items:center;gap:var(--space-2)"><i class="ph-duotone {{ g.icon }}" style="font-size:22px;color:var(--color-accent)"></i><h4 style="margin:0">{{ g.title }}</h4></div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">{{ g.who }}</div>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+            <div style="font-size:14px;line-height:1.45;padding-left:var(--space-3);text-indent:calc(-1 * var(--space-3))">— {{ it }}</div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-for list="{{ flows }}" as="f" hint-placeholder-count="4">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+      <div style="max-width:720px">
+        <div style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700)">Luồng {{ f.no }}</div>
+        <h2 style="margin:0 0 var(--space-2)">{{ f.title }}</h2>
+        <p style="margin:0;font-size:15px;color:var(--color-neutral-700);text-wrap:pretty">{{ f.desc }}</p>
+      </div>
+      <div style="overflow-x:auto">
+        <div style="min-width:820px;position:relative;padding-bottom:var(--space-4)">
+          <div style="position:absolute;top:0;bottom:0;left:12.5%;width:1px;background:var(--color-neutral-400)"></div>
+          <div style="position:absolute;top:0;bottom:0;left:37.5%;width:1px;background:var(--color-neutral-400)"></div>
+          <div style="position:absolute;top:0;bottom:0;left:62.5%;width:1px;background:var(--color-neutral-400)"></div>
+          <div style="position:absolute;top:0;bottom:0;left:87.5%;width:1px;background:var(--color-neutral-400)"></div>
+          <div style="position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-2);margin-bottom:var(--space-4)">
+            <sc-for list="{{ lanes }}" as="l" hint-placeholder-count="4">
+              <div style="justify-self:center;text-align:center;background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);min-width:150px;box-shadow:var(--shadow-sm)">
+                <i class="ph-duotone {{ l.icon }}" style="font-size:20px;color:var(--color-accent)"></i>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">{{ l.name }}</div>
+                <div style="font-size:11px;color:var(--color-neutral-700)">{{ l.tech }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-for list="{{ f.steps }}" as="m" hint-placeholder-count="8">
+            <div style="position:relative;display:grid;grid-template-columns:repeat(8,1fr);min-height:40px;align-items:end">
+              <sc-if value="{{ m.isArrow }}" hint-placeholder-val="{{ true }}">
+                <div style="grid-column:{{ m.col }};grid-row:1;display:flex;flex-direction:column;gap:3px;padding-bottom:6px">
+                  <div style="font-size:12px;line-height:1.3;text-align:center;padding:0 8px;color:{{ m.ink }}"><span style="font-weight:600;color:var(--color-accent-700)">{{ m.n }}</span> {{ m.label }}</div>
+                  <div style="position:relative;border-top:1.5px {{ m.line }} {{ m.stroke }}">
+                    <div style="position:absolute;top:-6px;{{ m.headSide }}:-1px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;{{ m.headBorder }}:8px solid {{ m.stroke }}"></div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isSelf }}" hint-placeholder-val="{{ false }}">
+                <div style="grid-column:{{ m.col }};grid-row:1;display:flex;align-items:center;gap:var(--space-2);padding:6px 0">
+                  <div style="flex:none;width:26px;height:20px;border:1.5px solid var(--color-text);border-left:0;border-radius:0 var(--radius-lg) var(--radius-lg) 0"></div>
+                  <div style="font-size:12px;line-height:1.3"><span style="font-weight:600;color:var(--color-accent-700)">{{ m.n }}</span> {{ m.label }}</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isFrame }}" hint-placeholder-val="{{ false }}">
+                <div style="grid-column:1 / 9;grid-row:1;display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-2);border-top:1px dashed var(--color-accent-2-600);padding:4px 0">
+                  <span class="tag tag-accent-2" style="font-weight:600">{{ m.kind }}</span><span style="font-size:12px;font-style:italic;color:var(--color-accent-2-800)">{{ m.label }}</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const U=0,F=1,B=2,D=3;
+const FEATURES=[
+  {icon:'ph-key',title:'Xác thực',who:'Mọi người dùng',items:['Đăng nhập bằng email công ty + mật khẩu','Phân quyền theo vai trò: Nhân viên / Trưởng nhóm / Giám đốc','Phiên đăng nhập JWT, tự hết hạn; đăng xuất','Điều hướng menu theo quyền']},
+  {icon:'ph-user',title:'Nhân viên',who:'Vai trò Nhân viên',items:['Dashboard: phép còn lại, đơn gần nhất, lương tháng','Gửi đơn nghỉ: phép năm, nghỉ ốm, không lương, nửa ngày','Theo dõi trạng thái đơn qua từng bước duyệt','Xem phiếu lương theo tháng, tải PDF','Xem hồ sơ cá nhân']},
+  {icon:'ph-stamp',title:'Quản lý',who:'Trưởng nhóm (cấp 1) · Giám đốc (cấp 2)',items:['Hàng đợi đơn chờ duyệt, có huy hiệu số lượng','Duyệt / từ chối; trưởng nhóm duyệt xong chuyển giám đốc','Lịch vắng mặt của đội trong tuần','Bảng lương toàn công ty theo tháng','Danh sách nhân viên: tìm, lọc theo nhóm, xem hồ sơ']},
+  {icon:'ph-database',title:'Hệ thống',who:'Backend & Database',items:['Tính ngày làm việc, trừ quỹ phép khi đơn được duyệt cuối','Chặn đơn trùng ngày hoặc vượt quỹ phép','Ghi lịch sử duyệt (audit log)','Thông báo cho người duyệt kế tiếp và người gửi','Kiểm tra quyền truy cập dữ liệu lương']}
+];
+const FLOWS=[
+  {title:'Đăng nhập',desc:'Xác thực tài khoản, cấp token và tải Dashboard theo vai trò.',steps:[
+    [U,F,'Nhập email, mật khẩu'],[F,F,'Kiểm tra định dạng form'],[F,B,'POST /api/auth/login'],[B,D,'SELECT users WHERE email'],[D,B,'user (password_hash, role, team)','r'],[B,B,'So khớp mật khẩu (bcrypt)'],
+    ['alt','Sai email hoặc mật khẩu'],[B,F,'401 Unauthorized','r'],[F,U,'Báo “Sai email hoặc mật khẩu”','r'],
+    ['else','Hợp lệ'],[B,D,'INSERT sessions (refresh token)'],[B,F,'200 { accessToken, role }','r'],[F,F,'Lưu token, chọn menu theo vai trò'],[F,B,'GET /api/dashboard'],[B,D,'SELECT quỹ phép, đơn, phiếu lương mới nhất'],[D,B,'Dữ liệu dashboard','r'],[B,F,'200 JSON','r'],[F,U,'Hiển thị Dashboard','r']]},
+  {title:'Gửi đơn nghỉ phép',desc:'Nhân viên tạo đơn; hệ thống kiểm tra quỹ phép và trùng lịch, rồi chuyển trưởng nhóm duyệt.',steps:[
+    [U,F,'Chọn loại nghỉ, ngày, nửa ngày, lý do'],[F,F,'Tính số ngày làm việc, cảnh báo vượt phép'],[U,F,'Bấm “Gửi đơn”'],[F,B,'POST /api/leave-requests (Bearer)'],[B,B,'Xác thực JWT, kiểm tra dữ liệu'],[B,D,'SELECT leave_balances, đơn trùng ngày'],[D,B,'Quỹ phép còn, đơn trùng','r'],
+    ['alt','Không hợp lệ (trùng ngày / vượt quỹ)'],[B,F,'422 + lý do lỗi','r'],[F,U,'Hiện lỗi trên form','r'],
+    ['else','Hợp lệ'],[B,D,'INSERT leave_requests (status = chờ trưởng nhóm)'],[B,D,'INSERT notifications → trưởng nhóm'],[B,F,'201 { request }','r'],[F,U,'Toast “Đã gửi đơn · chờ duyệt”','r']]},
+  {title:'Duyệt đơn (2 cấp)',desc:'Trưởng nhóm duyệt cấp 1, giám đốc duyệt cấp 2. Quỹ phép chỉ bị trừ khi giám đốc duyệt.',steps:[
+    [U,F,'Quản lý mở trang “Duyệt đơn”'],[F,B,'GET /api/approvals?status=pending'],[B,D,'SELECT đơn theo cấp và nhóm của người duyệt'],[D,B,'Danh sách đơn chờ','r'],[B,F,'200 JSON','r'],[F,U,'Hiển thị hàng đợi','r'],
+    [U,F,'Bấm “Duyệt” hoặc “Từ chối”'],[F,B,'PATCH /api/leave-requests/:id { action }'],[B,B,'Kiểm tra quyền và trạng thái hiện tại'],
+    ['alt','Trưởng nhóm duyệt'],[B,D,'UPDATE status = chờ giám đốc'],[B,D,'INSERT notifications → giám đốc'],
+    ['else','Giám đốc duyệt'],[B,D,'BEGIN · UPDATE status = đã duyệt'],[B,D,'UPDATE leave_balances (trừ ngày) · COMMIT'],
+    ['else','Từ chối (bất kỳ cấp)'],[B,D,'UPDATE status = từ chối'],
+    ['end','Kết thúc rẽ nhánh'],[B,D,'INSERT approval_logs, thông báo người gửi'],[B,F,'200 { request }','r'],[F,U,'Cập nhật trạng thái, toast','r']]},
+  {title:'Xem bảng lương',desc:'Nhân viên chỉ xem phiếu của mình; quản lý xem thêm bảng tổng hợp toàn công ty.',steps:[
+    [U,F,'Mở “Bảng lương”, chọn tháng'],[F,B,'GET /api/payslips?month=2026-10'],[B,B,'Xác thực JWT, giới hạn theo user_id'],[B,D,'SELECT payslips + payslip_items'],[D,B,'Cơ bản, phụ cấp, khấu trừ','r'],[B,B,'Tính tổng thu nhập, thực nhận'],[B,F,'200 { payslip }','r'],[F,U,'Hiển thị phiếu lương','r'],
+    ['alt','Vai trò quản lý'],[F,B,'GET /api/payroll?month=2026-10'],[B,D,'SELECT tổng hợp toàn công ty'],[D,B,'18 dòng lương','r'],[B,F,'200 { rows, total }','r'],[F,U,'Bảng lương toàn công ty','r'],
+    ['end','Tuỳ chọn'],[U,F,'Bấm “Tải PDF”'],[F,B,'GET /api/payslips/:id/pdf'],[B,F,'application/pdf','r'],[F,U,'Tải file về máy','r']]}
+];
+const LANES=[{name:'Người dùng',tech:'Nhân viên / Quản lý',icon:'ph-user'},{name:'Frontend',tech:'React SPA · desktop & mobile',icon:'ph-browser'},{name:'Backend',tech:'REST API · JWT',icon:'ph-hard-drives'},{name:'Database',tech:'PostgreSQL',icon:'ph-database'}];
+const KIND={alt:'alt',else:'else',end:'end'};
+function build(steps){ let n=0; return steps.map(s=>{
+  if(typeof s[0]==='string') return {isFrame:true,kind:KIND[s[0]],label:s[1]};
+  const [a,b,label,t]=s; n++;
+  if(a===b) return {isSelf:true,n:n+'.',label,col:`${2*a+2} / ${Math.min(2*a+5,9)}`};
+  const ret=t==='r', right=b>a;
+  return {isArrow:true,n:n+'.',label,col:`${2*Math.min(a,b)+2} / ${2*Math.max(a,b)+2}`,line:ret?'dashed':'solid',stroke:ret?'var(--color-neutral-700)':'var(--color-text)',ink:ret?'var(--color-neutral-800)':'var(--color-text)',headSide:right?'right':'left',headBorder:right?'border-left':'border-right'};
+});}
+class Component extends DCLogic {
+  renderVals(){ return { features:FEATURES, lanes:LANES, flows:FLOWS.map((f,i)=>({...f,no:String(i+1).padStart(2,'0'),steps:build(f.steps)})) }; }
+}
+</script>
+</body>
+</html>
