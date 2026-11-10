@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="./_ds/broadsheet-f498a39b-0fea-4e0e-8e8a-d05f8e2368be/styles.css">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>body{margin:0;background:var(--color-bg);color:var(--color-text)} a{color:var(--color-accent)} a:hover{color:var(--color-accent-700)}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);font-family:var(--font-body)">
+<sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));">
+    <div style="padding:clamp(32px,7vw,96px) clamp(24px,6vw,80px);display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-8)">
+      <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Ngoclinhn Group · Cổng nhân sự</div>
+      <div style="max-width:520px">
+        <h1 style="font-size:clamp(40px,6vw,68px);line-height:1.02;margin:0 0 var(--space-4)">Mọi việc nhân sự, trên một trang giấy.</h1>
+        <p style="font-size:17px;max-width:420px;color:var(--color-neutral-700);text-wrap:pretty">Xem ngày phép, gửi đơn nghỉ, nhận phiếu lương — và duyệt đơn cho đội của bạn.</p>
+      </div>
+      <div style="font-size:13px;color:var(--color-neutral-700)">Thứ Ba, 10 tháng 11, 2026 · 18 nhân sự</div>
+    </div>
+    <div style="padding:clamp(32px,7vw,96px) clamp(24px,6vw,80px);display:flex;flex-direction:column;justify-content:center;background:var(--color-surface)">
+      <div style="max-width:380px;width:100%;display:flex;flex-direction:column;gap:var(--space-4)">
+        <h2 style="margin:0">Đăng nhập</h2>
+        <div class="field"><label>Email công ty</label><input class="input" value="{{ loginEmail }}" onChange="{{ onEmail }}"></div>
+        <div class="field"><label>Mật khẩu</label><input class="input" type="password" value="demo1234" readOnly="{{ true }}"></div>
+        <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--color-accent-2-700)">Không tìm thấy tài khoản với email này.</div></sc-if>
+        <button class="btn btn-primary" style="width:100%;min-height:44px" onClick="{{ doLogin }}">Đăng nhập</button>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-4)">
+          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Tài khoản demo</div>
+          <sc-for list="{{ demoAccounts }}" as="d" hint-placeholder-count="3">
+            <button class="btn btn-secondary" style="justify-content:space-between;min-height:44px;width:100%" onClick="{{ d.pick }}"><span>{{ d.name }}</span><span style="font-weight:400;font-size:12px;color:var(--color-neutral-700)">{{ d.role }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;min-height:100vh">
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <aside style="width:232px;flex:none;padding:var(--space-6) var(--space-4);display:flex;flex-direction:column;gap:var(--space-6);position:sticky;top:0;height:100vh">
+        <div>
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:19px">Ngoclinhn Group</div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">Cổng nhân sự</div>
+        </div>
+        <nav style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+            <button class="btn" style="justify-content:flex-start;gap:10px;padding:9px 10px;color:{{ n.color }};background:{{ n.bg }};font-weight:{{ n.weight }}" onClick="{{ n.go }}"><i class="ph-duotone {{ n.icon }}" style="font-size:19px"></i><span style="flex:1;text-align:left">{{ n.label }}</span><sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent-2" style="padding:1px 7px">{{ n.badge }}</span></sc-if></button>
+          </sc-for>
+        </nav>
+        <div style="margin-top:auto;display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="font-size:14px;font-weight:600">{{ me.name }}</div>
+          <div style="font-size:12px;color:var(--color-neutral-700)">{{ me.title }}</div>
+          <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:0" onClick="{{ logout }}"><i class="ph-duotone ph-sign-out"></i>Đăng xuất</button>
+        </div>
+      </aside>
+    </sc-if>
+    <main style="flex:1;min-width:0;padding:{{ mainPad }}">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:17px">Ngoclinhn Group</div>
+          <button class="btn btn-ghost" style="min-height:44px" onClick="{{ logout }}"><i class="ph-duotone ph-sign-out" style="font-size:20px"></i></button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sDash }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:1080px;display:flex;flex-direction:column;gap:var(--space-8)">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);font-size:12px;color:var(--color-neutral-700)">
+    <span>Phương án dashboard:</span>
+    <div style="display:flex;gap:2px">
+      <sc-for list="{{ variants }}" as="o" hint-placeholder-count="3">
+        <button class="btn" style="padding:4px 10px;font-size:12px;color:{{ o.color }};background:{{ o.bg }}" onClick="{{ o.pick }}">{{ o.v }} · {{ o.name }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ vA }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;gap:var(--space-8)">
+    <div>
+      <div style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">{{ todayLabel }}</div>
+      <h1 style="font-size:clamp(34px,5vw,56px);line-height:1.04;margin:0;max-width:760px;text-wrap:balance">Chào buổi sáng, {{ firstName }}. Bạn còn {{ annualLeft }} ngày phép năm.</h1>
+      <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
+        <p style="font-size:18px;margin:var(--space-3) 0 0;color:var(--color-neutral-800)"><button class="btn btn-ghost" style="font-size:18px;padding:0 2px;font-weight:600" onClick="{{ goApprove }}">{{ pendingCount }} đơn nghỉ đang chờ bạn duyệt</button> — {{ approverLabel }}.</p>
+      </sc-if>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-6) var(--space-8)">
+      <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Phép năm 2026</div>
+        <div style="font-family:var(--font-heading);font-weight:600;font-size:64px;line-height:1">{{ annualLeft }}<span style="font-size:22px;color:var(--color-neutral-600)"> / 12</span></div>
+        <div style="height:4px;background:var(--color-neutral-300)"><div style="height:4px;width:{{ annualPct }};background:var(--color-accent)"></div></div>
+        <div style="font-size:13px;color:var(--color-neutral-700)">Đã dùng {{ annualUsed }} ngày · nghỉ ốm còn {{ sickLeft }} ngày</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Thực nhận tháng 10</div>
+        <div style="font-family:var(--font-heading);font-weight:600;font-size:34px;line-height:1.1">{{ slip.net }}</div>
+        <div style="font-size:13px;color:var(--color-neutral-700)">Đã chuyển khoản 05/11</div>
+        <button class="btn btn-ghost" style="align-self:flex-start" onClick="{{ goPay }}">Xem phiếu lương <i class="ph-duotone ph-arrow-right"></i></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Đơn gần nhất</div>
+        <sc-if value="{{ hasLatest }}" hint-placeholder-val="{{ true }}">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:22px">{{ latest.typeLabel }}, {{ latest.range }}</div>
+          <div style="display:flex;gap:var(--space-2);align-items:center"><span class="{{ latest.statusCls }}">{{ latest.statusLabel }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ latest.step }}</span></div>
+        </sc-if>
+        <button class="btn btn-primary" style="align-self:flex-start;margin-top:var(--space-2)" onClick="{{ openForm }}"><i class="ph-duotone ph-plus"></i>Tạo đơn nghỉ</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-8)">
+      <div>
+        <h3 style="margin-bottom:var(--space-3)">Vắng mặt tuần này</h3>
+        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+          <sc-for list="{{ away }}" as="a" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:var(--space-3)"><div><div style="font-weight:600">{{ a.name }}</div><div style="font-size:13px;color:var(--color-neutral-700)">{{ a.team }} · {{ a.typeLabel }}</div></div><div style="font-size:14px;white-space:nowrap">{{ a.range }}</div></div>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:var(--space-3)">Lịch nghỉ sắp tới</h3>
+        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+          <sc-for list="{{ upcoming }}" as="a" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:var(--space-3)"><div><div style="font-weight:600">{{ a.name }}</div><div style="font-size:13px;color:var(--color-neutral-700)">{{ a.typeLabel }} · {{ a.statusLabel }}</div></div><div style="font-size:14px;white-space:nowrap">{{ a.range }}</div></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ vB }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--space-3)">
+      <div><h2 style="margin:0">Sổ của {{ me.name }}</h2><div style="font-size:13px;color:var(--color-neutral-700)">{{ me.title }} · {{ me.team }} · {{ todayLabel }}</div></div>
+      <button class="btn btn-primary" onClick="{{ openForm }}"><i class="ph-duotone ph-plus"></i>Tạo đơn nghỉ</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--space-4)">
+      <div class="card"><div class="card-kicker">Phép năm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:32px">{{ annualLeft }}<span style="font-size:15px;color:var(--color-neutral-600)"> ngày</span></div></div>
+      <div class="card"><div class="card-kicker">Nghỉ ốm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:32px">{{ sickLeft }}<span style="font-size:15px;color:var(--color-neutral-600)"> ngày</span></div></div>
+      <div class="card"><div class="card-kicker">Đơn đang chờ</div><div style="font-family:var(--font-heading);font-weight:600;font-size:32px">{{ myPending }}</div></div>
+      <div class="card"><div class="card-kicker">Thực nhận T10</div><div style="font-family:var(--font-heading);font-weight:600;font-size:22px;padding-top:8px">{{ slip.net }}</div></div>
+    </div>
+    <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3)"><h4>Chờ bạn duyệt · {{ pendingCount }}</h4><button class="btn btn-ghost" onClick="{{ goApprove }}">Mở trang duyệt</button></div>
+        <div style="overflow-x:auto"><table class="table"><thead><tr><th>Nhân viên</th><th>Loại</th><th>Ngày</th><th>Số ngày</th><th></th></tr></thead><tbody>
+          <sc-for list="{{ pendingForMe }}" as="r" hint-placeholder-count="2"><tr><td>{{ r.name }}</td><td>{{ r.typeLabel }}</td><td>{{ r.range }}</td><td>{{ r.daysLabel }}</td><td style="text-align:right;white-space:nowrap"><button class="btn btn-ghost" onClick="{{ r.approve }}">Duyệt</button></td></tr></sc-for>
+        </tbody></table></div>
+        <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--color-neutral-700);padding:var(--space-2)">Không có đơn nào chờ.</div></sc-if>
+      </div>
+    </sc-if>
+    <div>
+      <h4>Đơn của tôi</h4>
+      <div style="overflow-x:auto"><table class="table"><thead><tr><th>Loại</th><th>Ngày</th><th>Số ngày</th><th>Trạng thái</th></tr></thead><tbody>
+        <sc-for list="{{ myReqs }}" as="r" hint-placeholder-count="3"><tr><td>{{ r.typeLabel }}</td><td>{{ r.range }}</td><td>{{ r.daysLabel }}</td><td><span class="{{ r.statusCls }}">{{ r.statusLabel }}</span></td></tr></sc-for>
+      </tbody></table></div>
+    </div>
+    <div>
+      <h4>Vắng mặt tuần 09 – 13/11</h4>
+      <div style="overflow-x:auto"><table class="table"><tbody>
+        <sc-for list="{{ away }}" as="a" hint-placeholder-count="3"><tr><td>{{ a.name }}</td><td>{{ a.team }}</td><td>{{ a.typeLabel }}</td><td style="text-align:right">{{ a.range }}</td></tr></sc-for>
+      </tbody></table></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ vC }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:var(--space-8);align-items:start">
+    <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+      <div><div style="font-size:13px;color:var(--color-neutral-700)">{{ todayLabel }}</div><h2 style="margin:0">Hôm nay, {{ firstName }} cần làm</h2></div>
+      <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
+        <sc-for list="{{ pendingForMe }}" as="r" hint-placeholder-count="2">
+          <div class="card elev-sm" style="gap:var(--space-3)">
+            <div class="card-kicker" style="color:var(--color-accent-2-700)">Cần bạn duyệt · {{ r.step }}</div>
+            <div class="card-title">{{ r.name }} — {{ r.typeLabel }}, {{ r.range }}</div>
+            <div class="card-body">“{{ r.reason }}” · {{ r.daysLabel }}</div>
+            <div style="display:flex;gap:var(--space-2)"><button class="btn btn-primary" style="min-height:40px" onClick="{{ r.approve }}">Duyệt</button><button class="btn btn-secondary" style="min-height:40px" onClick="{{ r.reject }}">Từ chối</button></div>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-for list="{{ myReqs }}" as="r" hint-placeholder-count="1">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-2) 0">
+          <div><div style="font-weight:600">{{ r.typeLabel }}, {{ r.range }}</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ r.step }}</div></div>
+          <span class="{{ r.statusCls }}">{{ r.statusLabel }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2)">
+        <button class="btn btn-primary" style="flex-direction:column;align-items:flex-start;gap:var(--space-2);padding:var(--space-4);min-height:110px" onClick="{{ openForm }}"><i class="ph-duotone ph-calendar-plus" style="font-size:26px"></i>Xin nghỉ phép</button>
+        <button class="btn btn-secondary" style="flex-direction:column;align-items:flex-start;gap:var(--space-2);padding:var(--space-4);min-height:110px" onClick="{{ goPay }}"><i class="ph-duotone ph-receipt" style="font-size:26px"></i>Phiếu lương T10</button>
+      </div>
+      <div style="display:flex;gap:var(--space-8)">
+        <div><div style="font-size:12px;color:var(--color-neutral-700)">Phép năm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:40px">{{ annualLeft }}</div></div>
+        <div><div style="font-size:12px;color:var(--color-neutral-700)">Nghỉ ốm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:40px">{{ sickLeft }}</div></div>
+      </div>
+      <div>
+        <h4>Đồng nghiệp vắng tuần này · {{ awayCount }}</h4>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <sc-for list="{{ away }}" as="a" hint-placeholder-count="3"><div style="font-size:14px">{{ a.name }} <span style="color:var(--color-neutral-700)">· {{ a.range }}</span></div></sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ sLeave }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:980px;display:flex;flex-direction:column;gap:var(--space-8)">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--space-3)">
+    <div><h1 style="margin:0">Nghỉ phép</h1><div style="font-size:14px;color:var(--color-neutral-700)">Đơn được duyệt 2 cấp: trưởng nhóm, rồi giám đốc.</div></div>
+    <button class="btn btn-primary" style="min-height:44px" onClick="{{ openForm }}"><i class="ph-duotone ph-plus"></i>Tạo đơn nghỉ</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:var(--space-8)">
+    <div><div style="font-size:12px;color:var(--color-neutral-700)">Phép năm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:40px">{{ annualLeft }}<span style="font-size:16px;color:var(--color-neutral-600)"> / 12</span></div></div>
+    <div><div style="font-size:12px;color:var(--color-neutral-700)">Nghỉ ốm còn</div><div style="font-family:var(--font-heading);font-weight:600;font-size:40px">{{ sickLeft }}<span style="font-size:16px;color:var(--color-neutral-600)"> / 5</span></div></div>
+    <div><div style="font-size:12px;color:var(--color-neutral-700)">Đang chờ duyệt</div><div style="font-family:var(--font-heading);font-weight:600;font-size:40px">{{ myPending }}</div></div>
+  </div>
+  <div>
+    <h3>Đơn của tôi</h3>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ myReqs }}" as="r" hint-placeholder-count="3">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:var(--space-2) var(--space-4);padding:var(--space-3) 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent)">
+          <div style="min-width:200px;flex:1"><div style="font-weight:600">{{ r.typeLabel }} · {{ r.range }}</div><div style="font-size:13px;color:var(--color-neutral-700)">{{ r.reason }}</div></div>
+          <div style="font-size:14px;width:80px">{{ r.daysLabel }}</div>
+          <div style="display:flex;align-items:center;gap:var(--space-2);width:200px"><span class="{{ r.statusCls }}">{{ r.statusLabel }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ r.step }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+<div class="dialog-backdrop" style="z-index:20;align-items:end;padding:0">
+  <div class="dialog" style="width:min(520px,100%);margin:auto;max-height:100vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="dialog-title">Đơn xin nghỉ</div><button class="btn btn-icon btn-ghost" style="width:44px;height:44px" onClick="{{ closeForm }}"><i class="ph-duotone ph-x" style="font-size:20px"></i></button></div>
+    <div class="field"><label>Loại nghỉ</label>
+      <div style="display:flex;flex-wrap:wrap;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+        <sc-for list="{{ leaveTypes }}" as="t" hint-placeholder-count="3"><button class="btn" style="flex:1;border-radius:0;min-height:40px;font-weight:400;color:{{ t.color }};background:{{ t.bg }}" onClick="{{ t.pick }}">{{ t.l }}</button></sc-for>
+      </div>
+    </div>
+    <button class="btn btn-ghost" style="align-self:flex-start;color:var(--color-text);font-weight:400;padding-left:0;min-height:40px" onClick="{{ toggleHalf }}"><i class="ph-duotone {{ halfIcon }}" style="font-size:22px;color:var(--color-accent)"></i>Nghỉ nửa ngày</button>
+    <div style="font-size:12px;color:var(--color-neutral-700);margin-top:-10px">{{ halfLabel }}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--space-3)">
+      <div class="field"><label>Từ ngày</label><input class="input" type="date" value="{{ form.from }}" onChange="{{ setFrom }}"></div>
+      <sc-if value="{{ notHalf }}" hint-placeholder-val="{{ true }}"><div class="field"><label>Đến ngày</label><input class="input" type="date" value="{{ form.to }}" onChange="{{ setTo }}"></div></sc-if>
+    </div>
+    <div class="field"><label>Lý do</label><textarea class="input" placeholder="Ngắn gọn, ví dụ: việc gia đình" value="{{ form.reason }}" onChange="{{ setReason }}"></textarea></div>
+    <div style="font-size:14px">Tổng: <strong>{{ fDays }}</strong> · Người duyệt: trưởng nhóm → giám đốc</div>
+    <sc-if value="{{ fAnnualOver }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--color-accent-2-700)">Vượt số ngày phép năm còn lại. Phần dư sẽ tính là nghỉ không lương.</div></sc-if>
+    <div class="dialog-actions"><button class="btn btn-secondary" style="min-height:44px" onClick="{{ closeForm }}">Huỷ</button><button class="btn btn-primary" style="min-height:44px" onClick="{{ submitLeave }}">Gửi đơn</button></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sApprove }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:980px;display:flex;flex-direction:column;gap:var(--space-8)">
+  <div><h1 style="margin:0">Duyệt đơn nghỉ</h1><div style="font-size:14px;color:var(--color-neutral-700)">{{ approverLabel }}</div></div>
+  <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <h3 style="margin:0">Chờ bạn · {{ pendingCount }}</h3>
+    <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;color:var(--color-neutral-700)">Không còn đơn nào chờ bạn duyệt.</div></sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:var(--space-4)">
+      <sc-for list="{{ pendingForMe }}" as="r" hint-placeholder-count="2">
+        <div class="card elev-sm" style="gap:var(--space-3)">
+          <div class="card-kicker">{{ r.team }} · {{ r.step }}</div>
+          <div class="card-title">{{ r.name }}</div>
+          <div style="font-size:14px">{{ r.typeLabel }} · {{ r.range }} · <strong>{{ r.daysLabel }}</strong></div>
+          <div class="card-body">“{{ r.reason }}”</div>
+          <div style="display:flex;gap:var(--space-2)"><button class="btn btn-primary" style="flex:1;min-height:44px" onClick="{{ r.approve }}"><i class="ph-duotone ph-check"></i>Duyệt</button><button class="btn btn-secondary" style="flex:1;min-height:44px" onClick="{{ r.reject }}">Từ chối</button></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div>
+    <h3>Tất cả đơn</h3>
+    <div style="overflow-x:auto"><table class="table" style="min-width:560px"><thead><tr><th>Nhân viên</th><th>Loại</th><th>Ngày</th><th>Số ngày</th><th>Trạng thái</th></tr></thead><tbody>
+      <sc-for list="{{ allReqs }}" as="r" hint-placeholder-count="4"><tr><td><div style="font-weight:600">{{ r.name }}</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ r.team }}</div></td><td>{{ r.typeLabel }}</td><td>{{ r.range }}</td><td>{{ r.daysLabel }}</td><td><span class="{{ r.statusCls }}">{{ r.statusLabel }}</span></td></tr></sc-for>
+    </tbody></table></div>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ sPay }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1080px;display:flex;flex-direction:column;gap:var(--space-8)">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--space-3)">
+    <h1 style="margin:0">Bảng lương</h1>
+    <div style="display:flex;flex-wrap:wrap;gap:2px">
+      <sc-for list="{{ months }}" as="m" hint-placeholder-count="3"><button class="btn" style="min-height:40px;font-weight:400;color:{{ m.color }};background:{{ m.bg }}" onClick="{{ m.pick }}">{{ m.label }}</button></sc-for>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:var(--space-8);align-items:start">
+    <div class="card elev-md" style="padding:var(--space-6);gap:var(--space-4);max-width:520px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3)">
+        <div><div class="card-kicker">Phiếu lương · tháng {{ month }}</div><div style="font-family:var(--font-heading);font-weight:600;font-size:22px;margin-top:4px">{{ me.name }}</div><div style="font-size:13px;color:var(--color-neutral-700)">{{ me.title }} · {{ me.id }}</div></div>
+        <button class="btn btn-icon btn-secondary" title="Tải PDF"><i class="ph-duotone ph-download-simple" style="font-size:18px"></i></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);font-size:15px">
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Thu nhập</div>
+        <div style="display:flex;justify-content:space-between"><span>Lương cơ bản</span><span>{{ slip.base }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Phụ cấp</span><span>{{ slip.allow }}</span></div>
+        <sc-if value="{{ slip.hasOt }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between"><span>Thưởng / làm thêm</span><span>{{ slip.ot }}</span></div></sc-if>
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);margin-top:var(--space-3)">Khấu trừ</div>
+        <div style="display:flex;justify-content:space-between"><span>Bảo hiểm (10,5%)</span><span>− {{ slip.ins }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Thuế TNCN</span><span>− {{ slip.tax }}</span></div>
+        <sc-if value="{{ slip.hasUnpaid }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between"><span>Nghỉ không lương</span><span>− {{ slip.unpaid }}</span></div></sc-if>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);margin-top:var(--space-3)">
+        <span style="font-size:14px">Thực nhận</span>
+        <span style="font-family:var(--font-heading);font-weight:600;font-size:30px;color:var(--color-accent-700)">{{ slip.net }}</span>
+      </div>
+    </div>
+    <sc-if value="{{ isEmpOnly }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:360px;font-size:14px;color:var(--color-neutral-700);display:flex;flex-direction:column;gap:var(--space-3)">
+        <p>Lương được chuyển vào ngày 05 hằng tháng. Thắc mắc về phiếu lương, liên hệ phòng Kế toán trong vòng 5 ngày làm việc.</p>
+        <div><div style="font-size:12px">Người phụ trách</div><div style="color:var(--color-text);font-weight:600">Cao Thị Hồng · Kế toán trưởng</div></div>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ isMgr }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:var(--space-3)">
+        <h3>Toàn công ty · tháng {{ month }}</h3>
+        <div style="font-size:14px">{{ headcount }} người · tổng thực nhận <strong>{{ payTotal }}</strong></div>
+      </div>
+      <div style="overflow-x:auto"><table class="table" style="min-width:720px"><thead><tr><th>Nhân viên</th><th style="text-align:right">Lương cơ bản</th><th style="text-align:right">Phụ cấp</th><th style="text-align:right">Khấu trừ</th><th style="text-align:right">Thực nhận</th></tr></thead><tbody>
+        <sc-for list="{{ payRows }}" as="p" hint-placeholder-count="5"><tr><td><div style="font-weight:600">{{ p.name }}</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ p.team }}</div></td><td style="text-align:right">{{ p.base }}</td><td style="text-align:right">{{ p.allow }}</td><td style="text-align:right">− {{ p.ded }}</td><td style="text-align:right;font-weight:600">{{ p.net }}</td></tr></sc-for>
+      </tbody></table></div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ sEmpList }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1080px;display:flex;flex-direction:column;gap:var(--space-6)">
+  <div><h1 style="margin:0">Nhân viên</h1><div style="font-size:14px;color:var(--color-neutral-700)">{{ empCount }} người</div></div>
+  <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+    <input class="input" style="max-width:360px;min-height:44px" placeholder="Tìm theo tên hoặc chức danh" value="{{ q }}" onChange="{{ setQ }}">
+    <div style="display:flex;flex-wrap:wrap;gap:2px">
+      <sc-for list="{{ teams }}" as="t" hint-placeholder-count="5"><button class="btn" style="font-weight:400;padding:6px 12px;color:{{ t.color }};background:{{ t.bg }}" onClick="{{ t.pick }}">{{ t.t }}</button></sc-for>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:var(--space-3)">
+    <sc-for list="{{ emps }}" as="e" hint-placeholder-count="6">
+      <button class="card" style="border:0;text-align:left;cursor:pointer;font:inherit;color:inherit;flex-direction:row;align-items:center;gap:var(--space-3)" style-hover="background:var(--color-neutral-300)" onClick="{{ e.open }}">
+        <div style="width:44px;height:44px;flex:none;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent-800);display:grid;place-items:center;font-weight:600;font-size:14px">{{ e.initials }}</div>
+        <div style="min-width:0;flex:1"><div style="font-weight:600">{{ e.name }}</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ e.title }}</div><div style="font-size:12px;color:var(--color-neutral-700)">{{ e.team }} · phép còn {{ e.leftLabel }}</div></div>
+        <sc-if value="{{ e.onLeave }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent-2">Đang nghỉ</span></sc-if>
+      </button>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sProfile }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:880px;display:flex;flex-direction:column;gap:var(--space-8)">
+  <sc-if value="{{ viewingOther }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost" style="align-self:flex-start" onClick="{{ backToList }}"><i class="ph-duotone ph-arrow-left"></i>Danh sách nhân viên</button></sc-if>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-4)">
+    <div style="width:88px;height:88px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent-800);display:grid;place-items:center;font-family:var(--font-heading);font-weight:600;font-size:30px">{{ viewE.initials }}</div>
+    <div><h1 style="margin:0">{{ viewE.name }}</h1><div style="font-size:16px;color:var(--color-neutral-700)">{{ viewE.title }} · {{ viewE.team }}</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--space-8)">
+    <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+      <h4 style="margin:0">Liên hệ & công việc</h4>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Email</div><div>{{ viewE.email }}</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Điện thoại</div><div>{{ viewE.phone }}</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Ngày vào làm</div><div>{{ viewE.start }}</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Quản lý trực tiếp</div><div>{{ viewE.lead }}</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+      <h4 style="margin:0">Hợp đồng & phép</h4>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Loại hợp đồng</div><div>Không xác định thời hạn</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Lương cơ bản</div><div>{{ viewE.baseLabel }}</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Phụ cấp</div><div>{{ viewE.allowLabel }}</div></div>
+      <div><div style="font-size:12px;color:var(--color-neutral-700)">Phép năm còn</div><div>{{ viewE.leftLabel }}</div></div>
+    </div>
+  </div>
+  <sc-if value="{{ isEmpOnly }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--color-neutral-700)">Cần cập nhật thông tin? Liên hệ Huỳnh Tấn Phát · Nhân sự – Hành chính.</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:30;background:var(--color-neutral-900);color:var(--color-bg);padding:10px 18px;border-radius:var(--radius-md);box-shadow:var(--shadow-lg);font-size:14px;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-check-circle" style="font-size:18px"></i>{{ toast }}</div>
+</sc-if>
+    </main>
+  </div>
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <nav style="position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--color-surface);box-shadow:var(--shadow-md);padding:4px 4px calc(4px + env(safe-area-inset-bottom))">
+      <sc-for list="{{ navMobile }}" as="n" hint-placeholder-count="5">
+        <button class="btn" style="flex:1;flex-direction:column;gap:2px;min-height:54px;padding:6px 2px;font-size:11px;font-weight:{{ n.weight }};color:{{ n.color }}" onClick="{{ n.go }}"><i class="ph-duotone {{ n.icon }}" style="font-size:22px"></i>{{ n.short }}</button>
+      </sc-for>
+    </nav>
+  </sc-if>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;dashboardVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;],&quot;default&quot;:&quot;A&quot;,&quot;tsType&quot;:&quot;'A'|'B'|'C'&quot;}}">
+const TODAY = new Date(2026, 10, 10);
+const EMP = [
+  ['e0','Ngô Ngọc Linh','Giám đốc','Ban Giám đốc','director',48000000,6000000,'03/2019','0903 112 018',3],
+  ['e2','Trần Minh Quân','Trưởng nhóm Marketing','Marketing','lead',28000000,3000000,'06/2020','0912 334 210',5],
+  ['e1','Nguyễn Thảo Linh','Chuyên viên Marketing','Marketing','employee',16500000,1500000,'09/2023','0987 450 112',4],
+  ['e3','Lê Hoàng Anh','Content Writer','Marketing','employee',13000000,1000000,'02/2024','0934 221 908',2],
+  ['e4','Phạm Gia Huy','Designer','Marketing','employee',15000000,1200000,'11/2022','0905 778 341',6],
+  ['e5','Võ Thu Trang','Trưởng nhóm Kinh doanh','Kinh doanh','lead',27000000,3000000,'01/2020','0918 004 556',3],
+  ['e6','Đặng Quốc Bảo','Sales Executive','Kinh doanh','employee',14000000,2000000,'07/2023','0976 312 450',7],
+  ['e7','Hồ Ngọc Mai','Sales Executive','Kinh doanh','employee',14000000,2000000,'04/2024','0938 665 120',1],
+  ['e8','Bùi Thanh Tùng','Account Manager','Kinh doanh','employee',18000000,1800000,'08/2021','0909 117 893',5],
+  ['e9','Phan Minh Châu','Sales Executive','Kinh doanh','employee',13500000,2000000,'03/2025','0967 220 781',0],
+  ['e10','Đỗ Khánh Vy','Trưởng nhóm Vận hành','Vận hành','lead',25000000,2500000,'05/2020','0913 887 602',4],
+  ['e11','Ngô Đức Thịnh','Điều phối kho','Vận hành','employee',12000000,1500000,'10/2022','0935 448 170',3],
+  ['e12','Lý Hải Yến','Chăm sóc khách hàng','Vận hành','employee',11000000,1000000,'06/2024','0989 503 266',2],
+  ['e13','Trịnh Văn Nam','Giao nhận','Vận hành','employee',10500000,1800000,'12/2023','0977 129 845',6],
+  ['e14','Mai Phương Thảo','Chăm sóc khách hàng','Vận hành','employee',11000000,1000000,'02/2025','0908 664 731',1],
+  ['e15','Cao Thị Hồng','Kế toán trưởng','Kế toán','lead',24000000,2500000,'04/2019','0916 225 097',2],
+  ['e16','Lâm Bích Ngọc','Kế toán viên','Kế toán','employee',13000000,1000000,'09/2022','0937 880 413',4],
+  ['e17','Huỳnh Tấn Phát','Nhân sự – Hành chính','Kế toán','employee',14000000,1200000,'01/2023','0968 341 225',3]
+].map(([id,name,title,team,role,base,allow,start,phone,used]) => ({id,name,title,team,role,base,allow,start,phone,used,
+  email: id==='e0'?'linh.ngo@ngoclinhn.vn':id==='e2'?'quan.tran@ngoclinhn.vn':id==='e1'?'linh.nguyen@ngoclinhn.vn':name.split(' ').slice(-1)[0].normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase()+'.'+id+'@ngoclinhn.vn'}));
+const byId = id => EMP.find(e => e.id === id);
+const TYPES = { annual:'Phép năm', sick:'Nghỉ ốm', unpaid:'Nghỉ không lương' };
+const vnd = n => n.toLocaleString('vi-VN') + ' ₫';
+const fmt = d => { const [y,m,dd] = d.split('-'); return `${+dd}/${+m}`; };
+const dayCount = (a,b,half) => { if (half) return 0.5; let n=0; const d=new Date(a), e=new Date(b); while(d<=e){ const w=d.getDay(); if(w&&w<6)n++; d.setDate(d.getDate()+1);} return n; };
+const STATUS = {
+  lead:{label:'Chờ trưởng nhóm',cls:'tag tag-neutral',step:'Bước 1/2'},
+  director:{label:'Chờ giám đốc',cls:'tag tag-accent-2',step:'Bước 2/2'},
+  approved:{label:'Đã duyệt',cls:'tag tag-accent',step:'Hoàn tất'},
+  rejected:{label:'Từ chối',cls:'tag tag-outline',step:'Đã đóng'}
+};
+const INIT_REQ = [
+  {id:'r1',emp:'e1',type:'annual',from:'2026-11-19',to:'2026-11-20',half:false,reason:'Về quê dự đám cưới em gái',status:'lead',created:'2026-11-08'},
+  {id:'r2',emp:'e1',type:'sick',from:'2026-10-14',to:'2026-10-14',half:false,reason:'Sốt, có giấy khám',status:'approved',created:'2026-10-14'},
+  {id:'r3',emp:'e1',type:'annual',from:'2026-09-03',to:'2026-09-04',half:false,reason:'Nghỉ lễ nối dài',status:'approved',created:'2026-08-25'},
+  {id:'r4',emp:'e3',type:'annual',from:'2026-11-12',to:'2026-11-13',half:false,reason:'Việc gia đình',status:'director',created:'2026-11-05'},
+  {id:'r5',emp:'e4',type:'annual',from:'2026-11-24',to:'2026-11-24',half:true,reason:'Đi khám răng buổi sáng',status:'lead',created:'2026-11-09'},
+  {id:'r6',emp:'e6',type:'unpaid',from:'2026-11-26',to:'2026-11-28',half:false,reason:'Thi chứng chỉ',status:'director',created:'2026-11-06'},
+  {id:'r7',emp:'e11',type:'sick',from:'2026-11-10',to:'2026-11-11',half:false,reason:'Đau lưng',status:'approved',created:'2026-11-10'},
+  {id:'r8',emp:'e8',type:'annual',from:'2026-11-09',to:'2026-11-10',half:false,reason:'Du lịch cùng gia đình',status:'approved',created:'2026-10-28'},
+  {id:'r9',emp:'e16',type:'annual',from:'2026-11-13',to:'2026-11-13',half:true,reason:'Đón con',status:'approved',created:'2026-11-07'},
+  {id:'r10',emp:'e13',type:'unpaid',from:'2026-10-20',to:'2026-10-21',half:false,reason:'Việc riêng',status:'rejected',created:'2026-10-15'}
+];
+const MONTHS = ['10/2026','09/2026','08/2026'];
+
+class Component extends DCLogic {
+  state = { meId:null, screen:'dash', email:'linh.nguyen@ngoclinhn.vn', loginError:false, reqs:INIT_REQ, variant:null,
+    w: typeof window!=='undefined'?window.innerWidth:1200, form:{type:'annual',from:'2026-11-23',to:'2026-11-24',half:false,reason:''},
+    formOpen:false, toast:null, month:'10/2026', q:'', team:'Tất cả', viewEmp:null, rejectId:null };
+  componentDidMount(){ this._r=()=>this.setState({w:window.innerWidth}); window.addEventListener('resize',this._r); }
+  componentWillUnmount(){ window.removeEventListener('resize',this._r); }
+  go = s => this.setState({screen:s, viewEmp:null, formOpen:false});
+  flash = t => { this.setState({toast:t}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2600); };
+  decorate = r => { const e=byId(r.emp), s=STATUS[r.status], d=dayCount(r.from,r.to,r.half);
+    return {...r, name:e.name, title:e.title, team:e.team, typeLabel:TYPES[r.type]+(r.half?' · nửa ngày':''), range:r.from===r.to?fmt(r.from):`${fmt(r.from)} – ${fmt(r.to)}`, days:d, daysLabel:d+' ngày', statusLabel:s.label, statusCls:s.cls, step:s.step,
+      approve:()=>this.act(r.id,true), reject:()=>this.act(r.id,false)}; };
+  act = (id, ok) => { const me=byId(this.state.meId);
+    this.setState(s=>({reqs:s.reqs.map(r=>r.id!==id?r:{...r,status:!ok?'rejected':(me.role==='lead'?'director':'approved')})}));
+    this.flash(!ok?'Đã từ chối đơn':(me.role==='lead'?'Đã duyệt · chuyển Giám đốc':'Đã duyệt đơn')); };
+  payslip = (e, month) => { const m = MONTHS.indexOf(month); const ot = [1200000,800000,0][m]*(e.role==='employee'?1:0);
+    const ins = Math.round(e.base*0.105); const unpaid = (e.id==='e13'&&m===0)?Math.round(e.base/22*2):0; const tax = Math.round(Math.max(0,e.base+e.allow-ins-11000000-(e.id==='e1'?0:4400000))*0.08);
+    const gross = e.base+e.allow+ot, ded = ins+unpaid+tax;
+    return { base:vnd(e.base), allow:vnd(e.allow), ot:vnd(ot), ins:vnd(ins), unpaid:vnd(unpaid), tax:vnd(tax), gross:vnd(gross), ded:vnd(ded), net:vnd(gross-ded), netRaw:gross-ded, hasOt:ot>0, hasUnpaid:unpaid>0 }; };
+  renderVals(){
+    const s=this.state, me=s.meId?byId(s.meId):null, mobile=s.w<760;
+    const variant = s.variant || this.props.dashboardVariant || 'A';
+    const base = { loggedIn:!!me, loggedOut:!me, isMobile:mobile, isDesktop:!mobile, mainPad: mobile?'16px 16px 96px':'40px 48px 64px',
+      loginEmail:s.email, loginError:s.loginError, onEmail:e=>this.setState({email:e.target.value,loginError:false}),
+      doLogin:()=>{ const u=EMP.find(e=>e.email===s.email.trim().toLowerCase()); u?this.setState({meId:u.id,screen:'dash',loginError:false}):this.setState({loginError:true}); },
+      demoAccounts:[['e1','Nhân viên'],['e2','Quản lý · Trưởng nhóm'],['e0','Quản lý · Giám đốc']].map(([id,role])=>({name:byId(id).name,role,pick:()=>this.setState({email:byId(id).email,loginError:false})})),
+      logout:()=>this.setState({meId:null,screen:'dash'}), toast:s.toast, hasToast:!!s.toast };
+    if(!me) return base;
+    const isMgr = me.role!=='employee', isDir = me.role==='director';
+    const pendingForMe = s.reqs.filter(r=> isDir ? r.status==='director' : me.role==='lead' && r.status==='lead' && byId(r.emp).team===me.team);
+    const items = [['dash','Tổng quan','Tổng quan','ph-newspaper'],['leave','Nghỉ phép','Nghỉ phép','ph-calendar-blank'],
+      ...(isMgr?[['approve','Duyệt đơn','Duyệt','ph-stamp']]:[]),['pay','Bảng lương','Lương','ph-receipt'],
+      ...(isMgr?[['emp','Nhân viên','Nhân sự','ph-users-three']]:[]),['profile','Hồ sơ của tôi','Hồ sơ','ph-identification-card']];
+    const nav = items.map(([k,label,short,icon])=>({label,short,icon,go:()=>this.go(k),badge:k==='approve'&&pendingForMe.length?String(pendingForMe.length):'',
+      color:s.screen===k?'var(--color-accent-700)':'var(--color-text)', bg:s.screen===k?'var(--color-accent-100)':'transparent', weight:s.screen===k?600:400}));
+    const mine = s.reqs.filter(r=>r.emp===me.id);
+    const usedAnnual = me.used + mine.filter(r=>r.type==='annual'&&r.status==='approved'&&r.created>'2026-11-01').reduce((a,r)=>a+dayCount(r.from,r.to,r.half),0);
+    const usedSick = mine.filter(r=>r.type==='sick'&&r.status==='approved').reduce((a,r)=>a+dayCount(r.from,r.to,r.half),0);
+    const weekEnd='2026-11-13', weekStart='2026-11-09';
+    const away = s.reqs.filter(r=>r.status==='approved'||r.status==='director').filter(r=>r.from<=weekEnd&&r.to>=weekStart).map(this.decorate);
+    const upcoming = s.reqs.filter(r=>r.status!=='rejected'&&r.from>weekEnd&&r.from<='2026-11-30').sort((a,b)=>a.from<b.from?-1:1).map(this.decorate);
+    const slip = this.payslip(me, s.month);
+    const f = s.form, fDays = dayCount(f.from, f.half?f.from:f.to, f.half);
+    const setF = (k,v)=>this.setState(st=>({form:{...st.form,[k]:v}}));
+    const viewE = s.viewEmp?byId(s.viewEmp):me;
+    const teams = ['Tất cả','Ban Giám đốc','Marketing','Kinh doanh','Vận hành','Kế toán'];
+    const q = s.q.trim().toLowerCase();
+    const emps = EMP.filter(e=>(s.team==='Tất cả'||e.team===s.team)&&(!q||e.name.toLowerCase().includes(q)||e.title.toLowerCase().includes(q)))
+      .map(e=>({...e, initials:e.name.split(' ').slice(-2).map(x=>x[0]).join(''), leftLabel:(12-e.used)+' ngày', onLeave:away.some(a=>a.emp===e.id&&a.status==='approved'), open:()=>this.setState({screen:'emp',viewEmp:e.id})}));
+    const payRows = EMP.map(e=>{ const p=this.payslip(e,s.month); return {...e, ...p}; });
+    const total = payRows.reduce((a,r)=>a+r.netRaw,0);
+    return { ...base, me:{...me, initials:me.name.split(' ').slice(-2).map(x=>x[0]).join('')}, firstName:me.name.split(' ').slice(-1)[0], isMgr, isEmpOnly:!isMgr, isDir, isLead:me.role==='lead', nav, navMobile:nav.map(n=>({...n,color:n.weight===600?'var(--color-accent-700)':'var(--color-neutral-700)'})),
+      sDash:s.screen==='dash', sLeave:s.screen==='leave', sApprove:s.screen==='approve', sPay:s.screen==='pay', sEmpList:s.screen==='emp'&&!s.viewEmp, sProfile:s.screen==='profile'||(s.screen==='emp'&&!!s.viewEmp), viewingOther:!!s.viewEmp,
+      vA:variant==='A', vB:variant==='B', vC:variant==='C',
+      variants:['A','B','C'].map(v=>({v, name:{A:'Trang nhất',B:'Sổ cái',C:'Việc cần làm'}[v], pick:()=>this.setState({variant:v}), color:v===variant?'var(--color-bg)':'var(--color-text)', bg:v===variant?'var(--color-accent)':'transparent'})),
+      todayLabel:'Thứ Ba, 10 tháng 11, 2026', annualLeft:12-usedAnnual, annualUsed:usedAnnual, sickLeft:5-usedSick, annualPct:Math.round((12-usedAnnual)/12*100)+'%',
+      myReqs:mine.sort((a,b)=>a.created<b.created?1:-1).map(this.decorate), myPending:mine.filter(r=>r.status==='lead'||r.status==='director').length,
+      latest:mine.length?this.decorate(mine[0]):null, hasLatest:mine.length>0,
+      away, hasAway:away.length>0, awayCount:String(away.length), upcoming, pendingForMe:pendingForMe.map(this.decorate), pendingCount:pendingForMe.length, hasPending:pendingForMe.length>0, noPending:pendingForMe.length===0,
+      approverLabel:isDir?'Giám đốc · duyệt cấp 2':'Trưởng nhóm '+me.team+' · duyệt cấp 1',
+      allReqs:s.reqs.filter(r=>isDir||byId(r.emp).team===me.team).sort((a,b)=>a.created<b.created?1:-1).map(this.decorate),
+      slip, month:s.month, months:MONTHS.map(m=>({m,label:'Tháng '+m,pick:()=>this.setState({month:m}),color:m===s.month?'var(--color-bg)':'var(--color-text)',bg:m===s.month?'var(--color-accent)':'transparent'})),
+      payRows, payTotal:vnd(total), headcount:String(EMP.length),
+      formOpen:s.formOpen, openForm:()=>this.setState({screen:'leave',formOpen:true}), closeForm:()=>this.setState({formOpen:false}),
+      form:f, fDays:fDays+' ngày làm việc', fAnnualOver:f.type==='annual'&&fDays>12-usedAnnual, isHalf:f.half, notHalf:!f.half,
+      leaveTypes:Object.entries(TYPES).map(([k,l])=>({k,l,pick:()=>setF('type',k),color:f.type===k?'var(--color-bg)':'var(--color-text)',bg:f.type===k?'var(--color-accent)':'transparent'})),
+      setFrom:e=>setF('from',e.target.value), setTo:e=>setF('to',e.target.value), setReason:e=>setF('reason',e.target.value), toggleHalf:()=>setF('half',!f.half),
+      halfIcon:f.half?'ph-check-square':'ph-square', halfLabel:f.half?'Có — nghỉ nửa ngày':'Không — nghỉ cả ngày',
+      submitLeave:()=>{ const id='r'+Date.now(); this.setState(st=>({formOpen:false,reqs:[{id,emp:me.id,type:f.type,from:f.from,to:f.half?f.from:f.to,half:f.half,reason:f.reason||'—',status:me.role==='director'?'approved':me.role==='lead'?'director':'lead',created:'2026-11-10'},...st.reqs],form:{...st.form,reason:''}})); this.flash('Đã gửi đơn · chờ duyệt'); },
+      viewE:{...viewE, baseLabel:vnd(viewE.base), allowLabel:vnd(viewE.allow), leftLabel:(12-viewE.used)+' / 12 ngày', lead:viewE.role==='employee'?EMP.find(x=>x.team===viewE.team&&x.role==='lead').name:'Ngô Ngọc Linh', initials:viewE.name.split(' ').slice(-2).map(x=>x[0]).join('')},
+      backToList:()=>this.setState({viewEmp:null}),
+      emps, empCount:String(emps.length), q:s.q, setQ:e=>this.setState({q:e.target.value}),
+      teams:teams.map(t=>({t,pick:()=>this.setState({team:t}),color:t===s.team?'var(--color-bg)':'var(--color-text)',bg:t===s.team?'var(--color-accent)':'transparent'})),
+      goLeave:()=>this.go('leave'), goApprove:()=>this.go('approve'), goPay:()=>this.go('pay'), goEmp:()=>this.go('emp')
+    };
+  }
+}
+</script>
+</body>
+</html>
